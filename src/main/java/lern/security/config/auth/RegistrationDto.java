@@ -1,4 +1,4 @@
-package lern.security.model.auth;
+package lern.security.config.auth;
 
 import lombok.Data;
 
@@ -6,4 +6,6 @@ import lombok.Data;
 public class RegistrationDto {
     private String username;
     private String password;
+    private String email;
+
 }

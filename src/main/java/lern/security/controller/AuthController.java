@@ -4,28 +4,27 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import lern.security.exception.UserAlreadyExistException;
-import lern.security.model.Role;
 import lern.security.model.User;
-import lern.security.model.auth.RegistrationDto;
+import lern.security.config.auth.OnRegistrationCompleteEvent;
+import lern.security.config.auth.RegistrationDto;
+import lern.security.config.auth.VerificationToken;
 import lern.security.service.UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.context.request.WebRequest;
 
-import java.util.Collections;
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Calendar;
 
 @Controller
 @RequiredArgsConstructor
@@ -33,6 +32,7 @@ public class AuthController {
 
     private final UserService userService;
     private final AuthenticationManager authenticationManager;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @GetMapping("/login")
@@ -64,6 +64,9 @@ public class AuthController {
             if(newUser == null){
                 return "redirect:/reg?wrong=true";
             }
+            String appUrl = request.getContextPath();
+            eventPublisher.publishEvent(new OnRegistrationCompleteEvent(newUser,
+                    request.getLocale(), appUrl));
 
             Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(newUser.getUsername(),newUser.getPassword()));
             SecurityContext securityContext = SecurityContextHolder.getContext();
@@ -71,7 +74,7 @@ public class AuthController {
             HttpSession session = request.getSession(true);
             session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,securityContext);
 
-            return "redirect:/home";
+            return "redirect:/login";
 
         } catch (UserAlreadyExistException e){
             System.out.println(e);
@@ -80,6 +83,31 @@ public class AuthController {
     }
 
 
+    @GetMapping("/regitrationConfirm")
+    public String confirmRegistration
+            (WebRequest request, Model model, @RequestParam("token") String token) {
+        System.out.println("Дошел до контроллера");
+
+        VerificationToken verificationToken = userService.getVerificationToken(token);
+        if (verificationToken == null) {
+            model.addAttribute("message", "Ушлепок");
+            return "redirect:/reg?error=true";
+        }
+
+        User user = verificationToken.getUser();
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(Date.valueOf(LocalDate.now()));
+
+        if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
+            System.out.println("Время истекло");
+            model.addAttribute("message", "Время истекло");
+            return "redirect:/reg?error=true";
+        }
+
+        user.setEnabled(true);
+        userService.saveRegisteredUser(user);
+        return "redirect:/login";
+    }
 
 
     //    //Пример собственной авторизации Post запрос

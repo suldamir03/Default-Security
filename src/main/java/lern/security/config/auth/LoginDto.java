@@ -1,4 +1,4 @@
-package lern.security.model.auth;
+package lern.security.config.auth;
 
 import lombok.Data;
 
