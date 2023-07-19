@@ -3,12 +3,12 @@ package lern.security.service.impl;
 import lern.security.exception.UserAlreadyExistException;
 import lern.security.model.Role;
 import lern.security.model.User;
-import lern.security.config.auth.RegistrationDto;
-import lern.security.config.auth.VerificationToken;
+import lern.security.config.auth.model.RegistrationDto;
+import lern.security.config.auth.model.Token;
 import lern.security.repository.RoleRepository;
 import lern.security.repository.TokenRepository;
 import lern.security.repository.UserRepository;
-import lern.security.service.UserService;
+import lern.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -16,13 +16,17 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.sql.Date;
+import java.time.LocalDate;
+import java.util.Calendar;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserDetailsService, UserService {
+public class AuthServiceImpl implements UserDetailsService, AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -75,15 +79,16 @@ public class UserServiceImpl implements UserDetailsService, UserService {
 
     @Override
     public void createVerificationToken(User user, String token) {
-        VerificationToken verificationToken= new VerificationToken();
+        Token verificationToken= new Token();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
+        verificationToken.setType("VerificationToken");
         verificationToken.setExpiryDate(verificationToken.calculateExpiryDate(10));
         tokenRepository.save(verificationToken);
     }
 
     @Override
-    public VerificationToken getVerificationToken(String token) {
+    public Token getVerificationToken(String token) {
         return tokenRepository.findByToken(token);
     }
 
@@ -92,7 +97,51 @@ public class UserServiceImpl implements UserDetailsService, UserService {
         userRepository.save(user);
     }
 
+    @Override
+    public User findByEmail(String userEmail) {
+        return userRepository.findByEmail(userEmail).orElseThrow();
+    }
+
+    @Override
+    public void createPasswordResetTokenForUser(User user, String token) {
+        Token verificationToken= new Token();
+        verificationToken.setToken(token);
+        verificationToken.setUser(user);
+        verificationToken.setType("PasswordResetToken");
+        verificationToken.setExpiryDate(verificationToken.calculateExpiryDate(10));
+        tokenRepository.save(verificationToken);
+    }
+
     private boolean emailExists(String username) {
         return userRepository.existsByEmail(username);
+    }
+
+    public String validatePasswordResetToken(String token) {
+        final Token passToken = tokenRepository.findByToken(token);
+
+        return !isTokenFound(passToken) ? "invalidToken"
+                : isTokenExpired(passToken) ? "expired"
+                : null;
+    }
+
+    @Override
+    public Optional<User> getUserByPasswordResetToken(String token) {
+        return userRepository.getUserByPasswordResetToken(token, "PasswordResetToken");
+    }
+
+    @Override
+    public void changeUserPassword(User user, String newPassword) {
+        user.setPassword(newPassword);
+        userRepository.save(user);
+    }
+
+    private boolean isTokenFound(Token passToken) {
+        return passToken != null;
+    }
+
+    private boolean isTokenExpired(Token passToken) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(Date.valueOf(LocalDate.now()));
+        return passToken.getExpiryDate().before(cal.getTime());
     }
 }

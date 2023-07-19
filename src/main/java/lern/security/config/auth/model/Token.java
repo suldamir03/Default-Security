@@ -1,4 +1,4 @@
-package lern.security.config.auth;
+package lern.security.config.auth.model;
 
 import jakarta.persistence.*;
 import lern.security.model.User;
@@ -12,7 +12,7 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
-public class VerificationToken {
+public class Token {
     private static final int EXPIRATION = 60 * 24;
 
     @Id
@@ -21,11 +21,13 @@ public class VerificationToken {
     
     private String token;
   
-    @OneToOne(targetEntity = User.class, fetch = FetchType.EAGER)
+    @ManyToOne(targetEntity = User.class, fetch = FetchType.EAGER)
     @JoinColumn(nullable = false, name = "user_id")
     private User user;
     
     private Date expiryDate;
+    @Column(name = "type", nullable = false)
+    private String type;
    
     public Date calculateExpiryDate(int expiryTimeInMinutes) {
         Calendar cal = Calendar.getInstance();
