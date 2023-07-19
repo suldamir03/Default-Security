@@ -12,8 +12,8 @@ import java.util.Date;
 @Entity
 @Getter
 @Setter
+@Table(name = "tokens")
 public class Token {
-    private static final int EXPIRATION = 60 * 24;
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)

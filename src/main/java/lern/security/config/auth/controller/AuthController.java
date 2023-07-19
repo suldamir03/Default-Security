@@ -12,8 +12,11 @@ import lern.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
@@ -77,7 +80,6 @@ public class AuthController {
     @GetMapping("/regitrationConfirm")
     public String confirmRegistration
             (WebRequest request, Model model, @RequestParam("token") String token, HttpServletRequest servletRequest) {
-        System.out.println("Дошел до контроллера");
 
         Token verificationToken = authService.getVerificationToken(token);
         if (verificationToken == null) {
@@ -89,7 +91,6 @@ public class AuthController {
         cal.setTime(Date.valueOf(LocalDate.now()));
 
         if ((verificationToken.getExpiryDate().getTime() - cal.getTime().getTime()) <= 0) {
-            System.out.println("Время истекло");
             model.addAttribute("message", "Время истекло");
             return "redirect:/reg?error=true";
         }
@@ -97,13 +98,13 @@ public class AuthController {
         user.setEnabled(true);
         authService.saveRegisteredUser(user);
 
-//        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
-//        SecurityContext securityContext = SecurityContextHolder.getContext();
-//        securityContext.setAuthentication(authentication);
-//        HttpSession session = servletRequest.getSession(true);
-//        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,securityContext);
+        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(),user.getPassword()));
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        securityContext.setAuthentication(authentication);
+        HttpSession session = servletRequest.getSession(true);
+        session.setAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY,securityContext);
 
-        return "redirect:/login";
+        return "redirect:/home";
     }
 
 

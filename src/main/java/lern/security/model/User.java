@@ -34,7 +34,7 @@ public class User implements UserDetails {
     private Set<Role> roles;
 
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(mappedBy="user", cascade = CascadeType.ALL)
     private Set<Token> tokens;
 
     @Override

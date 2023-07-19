@@ -21,8 +21,8 @@ public class SecurityApplication {
 		mailSender.setHost("smtp.gmail.com");
 		mailSender.setPort(587);
 
-		mailSender.setUsername("login");
-		mailSender.setPassword("password");
+		mailSender.setUsername("suldamir03@gmail.com");
+		mailSender.setPassword("ohphbpjhuytyxsem");
 
 		Properties props = mailSender.getJavaMailProperties();
 		props.put("mail.transport.protocol", "smtp");
