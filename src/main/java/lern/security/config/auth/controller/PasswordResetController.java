@@ -46,7 +46,7 @@ public class PasswordResetController {
     }
 
     @GetMapping("/user/changePassword")
-    public String showChangePasswordPage(Locale locale, Model model,
+    public String showChangePasswordPage(Model model,
                                          @RequestParam("token") String token) {
         String result = authService.validatePasswordResetToken(token);
         if (result == null) {
@@ -60,15 +60,13 @@ public class PasswordResetController {
     }
 
     @PostMapping("/user/savePassword")
-    public String savePassword(final Locale locale, @ModelAttribute("passDto") PasswordDto passwordDto) {
+    public String savePassword( @ModelAttribute("passDto") PasswordDto passwordDto) {
         String result = authService.validatePasswordResetToken(passwordDto.getToken());
         if (result == null) {
             return "redirect:/forgotPassword?expired=true";
         }
         Optional<User> user = authService.getUserByPasswordResetToken(passwordDto.getToken());
-        if (user.isPresent()) {
-            authService.changeUserPassword(user.get(), passwordDto.getNewPassword());
-        }
+        user.ifPresent(value -> authService.changeUserPassword(value, passwordDto.getNewPassword()));
         return "redirect:/login?pass=true";
     }
 }

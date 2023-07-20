@@ -1,10 +1,10 @@
 package lern.security.service.impl;
 
+import lern.security.config.auth.model.RegistrationDto;
+import lern.security.config.auth.model.Token;
 import lern.security.exception.UserAlreadyExistException;
 import lern.security.model.Role;
 import lern.security.model.User;
-import lern.security.config.auth.model.RegistrationDto;
-import lern.security.config.auth.model.Token;
 import lern.security.repository.RoleRepository;
 import lern.security.repository.TokenRepository;
 import lern.security.repository.UserRepository;
@@ -16,8 +16,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.time.LocalDate;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Optional;
@@ -119,7 +117,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     public String validatePasswordResetToken(String token) {
         Token passToken = tokenRepository.findTokenByTokenAndType(token, "PasswordResetToken");
 
-        if (isTokenFound(passToken) == true){
+        if (isTokenFound(passToken)){
             if (isTokenExpired(passToken)){
                 return "true";
             }

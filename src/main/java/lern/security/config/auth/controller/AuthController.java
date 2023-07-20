@@ -57,7 +57,7 @@ public class AuthController {
     }
 
     @PostMapping("/reg")
-    public String createUser(@ModelAttribute("user") RegistrationDto userDto,HttpServletRequest request, HttpServletResponse response){
+    public String createUser(@ModelAttribute("user") RegistrationDto userDto,HttpServletRequest request){
         try {
 
             User newUser = authService.registerNewUserAccount(userDto);
@@ -71,7 +71,7 @@ public class AuthController {
             return "redirect:/login?email=true";
 
         } catch (UserAlreadyExistException e){
-            System.out.println(e);
+            System.out.println(e.getMessage());
             return "redirect:/reg?error";
         }
     }
@@ -79,7 +79,7 @@ public class AuthController {
 
     @GetMapping("/regitrationConfirm")
     public String confirmRegistration
-            (WebRequest request, Model model, @RequestParam("token") String token, HttpServletRequest servletRequest) {
+            (Model model, @RequestParam("token") String token, HttpServletRequest servletRequest) {
 
         Token verificationToken = authService.getVerificationToken(token);
         if (verificationToken == null) {
