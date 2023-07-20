@@ -70,7 +70,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
                 .enabled(false)
                 .username(userDto.getUsername())
                 .email(userDto.getEmail())
-                .password(userDto.getPassword())
+                .password(passwordEncoder.encode(userDto.getPassword()))
                 .roles(Collections.singleton(roleRepository.findByName("USER").get()))
                 .build();
 
@@ -89,7 +89,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public Token getVerificationToken(String token) {
-        return tokenRepository.findByToken(token);
+        return tokenRepository.findTokenByTokenAndType(token, "PasswordResetToken");
     }
 
     @Override
@@ -117,11 +117,17 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     }
 
     public String validatePasswordResetToken(String token) {
-        final Token passToken = tokenRepository.findByToken(token);
+        Token passToken = tokenRepository.findTokenByTokenAndType(token, "PasswordResetToken");
 
-        return !isTokenFound(passToken) ? "invalidToken"
-                : isTokenExpired(passToken) ? "expired"
-                : null;
+        if (isTokenFound(passToken) == true){
+            if (isTokenExpired(passToken)){
+                return "true";
+            }
+        }
+
+        return null;
+
+
     }
 
     @Override
@@ -131,7 +137,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public void changeUserPassword(User user, String newPassword) {
-        user.setPassword(newPassword);
+        user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }
 
@@ -141,7 +147,6 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     private boolean isTokenExpired(Token passToken) {
         Calendar cal = Calendar.getInstance();
-        cal.setTime(Date.valueOf(LocalDate.now()));
-        return passToken.getExpiryDate().before(cal.getTime());
+        return passToken.getExpiryDate().after(cal.getTime());
     }
 }

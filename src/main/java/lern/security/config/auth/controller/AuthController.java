@@ -108,9 +108,10 @@ public class AuthController {
     }
 
 
-    //    //Пример собственной авторизации Post запрос
+//        //Пример собственной авторизации Post запрос
 //    @PostMapping("/signin")
 //    public ResponseEntity<String> authenticateUser(@RequestBody User loginDto){
+// //Не забудьте о проверке логина и пароля
 //        Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(
 //                loginDto.getUsername(), loginDto.getPassword()));
 //

@@ -24,6 +24,7 @@
     <div th:if="${param.error}" class="alert alert-danger text-center" role="alert">Wrong email or password</div>
     <div th:if="${param.pass}" class="alert alert-success text-center" role="alert">Пароль успешно изменен</div>
     <div th:if="${param.email}" class="alert alert-success text-center" role="alert">Сообщение успешно отправлено на указанный email</div>
+    <div th:if="${param.token}" class="alert alert-danger text-center" role="alert">Не валидный токен</div>
 
     <!-- Email input -->
     <div class="form-outline mb-4">

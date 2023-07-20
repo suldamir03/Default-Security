@@ -2,6 +2,15 @@ Hi everyone, this is a small project - Template, for all my future projects.
 
 Here in particular implemented Spring Security on Spring 3.1.1
 
+The capabilities of this application are:
+
+- Standard Login
+- Logout
+- Registration with sending email
+- Reset Password with sending email.
+- PasswordEncoder - Bcrypt
+
+
 How to start the project?
 
  - You will need an IDE to run java applications
@@ -11,17 +20,14 @@ You will need to go to google.ru or com -> Account Management -> Security -> Two
 
  - Google will give you the password which you should put in two places - application.yml and JavaMailSender located in SecurityApplication(Class annotated @SpringBootApplication).
 
- - Postgres database and all
+ - Postgres database
 
  - Add the USER role to the role table
 
+ - run in posgtresql console 
+`create extension if not exists pgcrypto;
+   update users set password = crypt(password, gen_salt('bf', 8));`
 
-The capabilities of this application are:
-
- - Standard Login
- - Logout
- - Registration with sending email
- - Reset Password with sending email.
 
 How does it work?
 

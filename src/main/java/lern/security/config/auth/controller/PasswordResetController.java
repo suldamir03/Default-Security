@@ -49,8 +49,8 @@ public class PasswordResetController {
     public String showChangePasswordPage(Locale locale, Model model,
                                          @RequestParam("token") String token) {
         String result = authService.validatePasswordResetToken(token);
-        if (result != null) {
-            return "redirect:/login?message=Не валидный токен";
+        if (result == null) {
+            return "redirect:/login?token=true";
         } else {
             PasswordDto passwordDto = new PasswordDto();
             passwordDto.setToken(token);
@@ -67,7 +67,6 @@ public class PasswordResetController {
         }
         Optional<User> user = authService.getUserByPasswordResetToken(passwordDto.getToken());
         if (user.isPresent()) {
-            System.out.println("/user/savePassword if user present");
             authService.changeUserPassword(user.get(), passwordDto.getNewPassword());
         }
         return "redirect:/login?pass=true";
