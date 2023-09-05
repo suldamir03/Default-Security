@@ -1,10 +1,10 @@
-package lern.security.config.auth.controller;
+package lern.security.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
-import lern.security.config.auth.event.OnPasswordResetEvent;
-import lern.security.config.auth.model.PasswordDto;
-import lern.security.model.User;
-import lern.security.service.AuthService;
+import lern.security.security.event.OnPasswordResetEvent;
+import lern.security.security.model.PasswordDto;
+import lern.security.db.entity.User;
+import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;

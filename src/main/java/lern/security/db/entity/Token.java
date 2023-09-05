@@ -1,7 +1,6 @@
-package lern.security.config.auth.model;
+package lern.security.db.entity;
 
 import jakarta.persistence.*;
-import lern.security.model.User;
 import lombok.Getter;
 import lombok.Setter;
 

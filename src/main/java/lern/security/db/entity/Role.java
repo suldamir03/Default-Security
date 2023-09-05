@@ -1,4 +1,4 @@
-package lern.security.model;
+package lern.security.db.entity;
 
 import jakarta.persistence.*;
 import lombok.ToString;

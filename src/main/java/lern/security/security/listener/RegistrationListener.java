@@ -1,8 +1,8 @@
-package lern.security.config.auth.listener;
+package lern.security.security.listener;
 
-import lern.security.config.auth.event.OnRegistrationCompleteEvent;
-import lern.security.model.User;
-import lern.security.service.AuthService;
+import lern.security.security.event.OnRegistrationCompleteEvent;
+import lern.security.db.entity.User;
+import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.MessageSource;
@@ -17,7 +17,6 @@ import java.util.UUID;
 public class RegistrationListener implements ApplicationListener<OnRegistrationCompleteEvent> {
 
     private final AuthService service;
-    private final MessageSource messages;
     private final JavaMailSender mailSender;
 
     @Override

@@ -1,14 +1,14 @@
-package lern.security.service.impl;
+package lern.security.security.service.impl;
 
-import lern.security.config.auth.model.RegistrationDto;
-import lern.security.config.auth.model.Token;
-import lern.security.exception.UserAlreadyExistException;
-import lern.security.model.Role;
-import lern.security.model.User;
-import lern.security.repository.RoleRepository;
-import lern.security.repository.TokenRepository;
-import lern.security.repository.UserRepository;
-import lern.security.service.AuthService;
+import lern.security.security.model.RegistrationDto;
+import lern.security.db.entity.Token;
+import lern.security.security.exception.UserAlreadyExistException;
+import lern.security.db.entity.Role;
+import lern.security.db.entity.User;
+import lern.security.db.repository.RoleRepository;
+import lern.security.db.repository.TokenRepository;
+import lern.security.db.repository.UserRepository;
+import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

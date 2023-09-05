@@ -1,6 +1,6 @@
-package lern.security.config;
+package lern.security.security;
 
-import lern.security.service.impl.AuthServiceImpl;
+import lern.security.security.service.impl.AuthServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

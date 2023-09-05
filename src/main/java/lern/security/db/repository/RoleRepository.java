@@ -1,6 +1,6 @@
-package lern.security.repository;
+package lern.security.db.repository;
 
-import lern.security.model.Role;
+import lern.security.db.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

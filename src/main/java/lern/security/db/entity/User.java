@@ -1,7 +1,6 @@
-package lern.security.model;
+package lern.security.db.entity;
 
 import jakarta.persistence.*;
-import lern.security.config.auth.model.Token;
 import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

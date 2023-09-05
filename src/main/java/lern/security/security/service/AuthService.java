@@ -1,9 +1,9 @@
-package lern.security.service;
+package lern.security.security.service;
 
-import lern.security.exception.UserAlreadyExistException;
-import lern.security.model.User;
-import lern.security.config.auth.model.RegistrationDto;
-import lern.security.config.auth.model.Token;
+import lern.security.security.exception.UserAlreadyExistException;
+import lern.security.db.entity.User;
+import lern.security.security.model.RegistrationDto;
+import lern.security.db.entity.Token;
 
 import java.util.Optional;
 

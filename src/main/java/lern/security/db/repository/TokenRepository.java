@@ -1,6 +1,6 @@
-package lern.security.repository;
+package lern.security.db.repository;
 
-import lern.security.config.auth.model.Token;
+import lern.security.db.entity.Token;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

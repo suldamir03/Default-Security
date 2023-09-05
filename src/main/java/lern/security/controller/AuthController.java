@@ -1,13 +1,13 @@
-package lern.security.config.auth.controller;
+package lern.security.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
-import lern.security.config.auth.event.OnRegistrationCompleteEvent;
-import lern.security.config.auth.model.RegistrationDto;
-import lern.security.config.auth.model.Token;
-import lern.security.exception.UserAlreadyExistException;
-import lern.security.model.User;
-import lern.security.service.AuthService;
+import lern.security.security.event.OnRegistrationCompleteEvent;
+import lern.security.security.model.RegistrationDto;
+import lern.security.db.entity.Token;
+import lern.security.security.exception.UserAlreadyExistException;
+import lern.security.db.entity.User;
+import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
