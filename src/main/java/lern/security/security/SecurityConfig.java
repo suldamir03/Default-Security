@@ -17,27 +17,27 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
     private final AuthServiceImpl authService;
     private final PasswordEncoder passwordEncoder;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http.csrf(csrf -> csrf.disable())
+        return http
+                .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth ->
                         auth
                                 .requestMatchers("/login**", "/logout**", "/reg", "/css/**",
-                                        "/resources/**", "/regitrationConfirm**", "/user/savePassword",
-                                        "/user/changePassword", "/resetPassword", "/forgotPassword")
+                                        "/resources/**", "/registration/**",
+                                        "/user/savePassword",
+                                        "/user/change/password", "/resetPassword", "/forgotPassword")
                                 .permitAll()
-                                .anyRequest().authenticated()
-
-                );
-        http.formLogin(form -> form
+                                .anyRequest().authenticated())
+                .formLogin(form -> form
                 .loginPage("/login")
                 .permitAll()
                 .defaultSuccessUrl("/home")
-        );
-        return http.build();
+        ).build();
     }
 
     @Bean
@@ -47,9 +47,8 @@ public class SecurityConfig {
     }
 
 
-
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         final DaoAuthenticationProvider daoAuthenticationProvider = new DaoAuthenticationProvider();
         daoAuthenticationProvider.setPasswordEncoder(passwordEncoder);
         daoAuthenticationProvider.setUserDetailsService(authService);

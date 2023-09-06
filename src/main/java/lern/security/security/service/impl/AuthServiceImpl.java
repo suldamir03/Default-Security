@@ -1,13 +1,18 @@
 package lern.security.security.service.impl;
 
-import lern.security.security.model.RegistrationDto;
-import lern.security.db.entity.Token;
-import lern.security.security.exception.UserAlreadyExistException;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lern.security.db.entity.Role;
+import lern.security.db.entity.Token;
 import lern.security.db.entity.User;
 import lern.security.db.repository.RoleRepository;
 import lern.security.db.repository.TokenRepository;
 import lern.security.db.repository.UserRepository;
+import lern.security.security.exception.UserAlreadyExistException;
+import lern.security.security.model.RegistrationDto;
 import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -16,15 +21,10 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
-
 @Service
 @RequiredArgsConstructor
 public class AuthServiceImpl implements UserDetailsService, AuthService {
+
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final RoleRepository roleRepository;
@@ -32,22 +32,23 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public UserDetails loadUserByUsername(String usernameOrEmail) throws UsernameNotFoundException {
-        if (usernameOrEmail == null) throw new UsernameNotFoundException("Username is null");
+        if (usernameOrEmail == null) {
+            throw new UsernameNotFoundException("Username is null");
+        }
         usernameOrEmail = usernameOrEmail.trim();
-
 
         String finalUsernameOrEmail = usernameOrEmail;
         User user = userRepository.findByUsernameOrEmail(usernameOrEmail, usernameOrEmail)
                 .orElseThrow(() ->
-                        new UsernameNotFoundException("User not found with username or email: " + finalUsernameOrEmail));
-
+                        new UsernameNotFoundException(
+                                "User not found with username or email: " + finalUsernameOrEmail)
+                );
 
         Set<Role> authorities = user
                 .getRoles()
                 .stream()
                 .map((role) -> new Role(role.getAuthority())).collect(Collectors.toSet());
         user.setRoles(authorities);
-
 
         System.err.println("---- user ----");
         System.err.println(user.getUsername());
@@ -77,7 +78,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public void createVerificationToken(User user, String token) {
-        Token verificationToken= new Token();
+        Token verificationToken = new Token();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
         verificationToken.setType("VerificationToken");
@@ -87,7 +88,8 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public Token getVerificationToken(String token) {
-        return tokenRepository.findTokenByTokenAndType(token, "PasswordResetToken");
+        //todo: create token entity(not tokens)
+        return tokenRepository.findTokenByTokenAndType(token, "VerificationToken");
     }
 
     @Override
@@ -102,7 +104,7 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
 
     @Override
     public void createPasswordResetTokenForUser(User user, String token) {
-        Token verificationToken= new Token();
+        Token verificationToken = new Token();
         verificationToken.setToken(token);
         verificationToken.setUser(user);
         verificationToken.setType("PasswordResetToken");
@@ -117,8 +119,8 @@ public class AuthServiceImpl implements UserDetailsService, AuthService {
     public String validatePasswordResetToken(String token) {
         Token passToken = tokenRepository.findTokenByTokenAndType(token, "PasswordResetToken");
 
-        if (isTokenFound(passToken)){
-            if (isTokenExpired(passToken)){
+        if (isTokenFound(passToken)) {
+            if (isTokenExpired(passToken)) {
                 return "true";
             }
         }

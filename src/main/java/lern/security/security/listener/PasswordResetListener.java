@@ -1,16 +1,14 @@
 package lern.security.security.listener;
 
-import lern.security.security.event.OnPasswordResetEvent;
+import java.util.UUID;
 import lern.security.db.entity.User;
+import lern.security.security.event.OnPasswordResetEvent;
 import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -32,7 +30,7 @@ public class PasswordResetListener implements ApplicationListener<OnPasswordRese
         String recipientAddress = user.getEmail();
         String subject = "Reset your Password";
         String confirmationUrl
-                = event.getAppUrl() + "/user/changePassword?token=" + token;
+                = event.getAppUrl() + "/user/change/password?token=" + token;
         String message = "Пройдите по ссылке для изменения пароля";
 
         SimpleMailMessage email = new SimpleMailMessage();

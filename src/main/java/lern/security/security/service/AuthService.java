@@ -1,13 +1,13 @@
 package lern.security.security.service;
 
-import lern.security.security.exception.UserAlreadyExistException;
-import lern.security.db.entity.User;
-import lern.security.security.model.RegistrationDto;
-import lern.security.db.entity.Token;
-
 import java.util.Optional;
+import lern.security.db.entity.Token;
+import lern.security.db.entity.User;
+import lern.security.security.exception.UserAlreadyExistException;
+import lern.security.security.model.RegistrationDto;
 
 public interface AuthService {
+
     User registerNewUserAccount(RegistrationDto user) throws UserAlreadyExistException;
 
     void createVerificationToken(User user, String token);

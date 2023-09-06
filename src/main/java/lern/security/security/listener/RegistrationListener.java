@@ -1,16 +1,14 @@
 package lern.security.security.listener;
 
-import lern.security.security.event.OnRegistrationCompleteEvent;
+import java.util.UUID;
 import lern.security.db.entity.User;
+import lern.security.security.event.OnRegistrationCompleteEvent;
 import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.MessageSource;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Component;
-
-import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -31,8 +29,7 @@ public class RegistrationListener implements ApplicationListener<OnRegistrationC
 
         String recipientAddress = user.getEmail();
         String subject = "Registration Confirmation";
-        String confirmationUrl
-                = event.getAppUrl() + "/regitrationConfirm?token=" + token;
+        String confirmationUrl = event.getAppUrl() + "/registration/confirm?token=" + token;
         String message = "Пройдите по ссылке ";
 
         SimpleMailMessage email = new SimpleMailMessage();

@@ -1,9 +1,11 @@
 package lern.security.controller;
 
 import jakarta.servlet.http.HttpServletRequest;
+import java.util.Optional;
+import java.util.UUID;
+import lern.security.db.entity.User;
 import lern.security.security.event.OnPasswordResetEvent;
 import lern.security.security.model.PasswordDto;
-import lern.security.db.entity.User;
 import lern.security.security.service.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -15,12 +17,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java.util.Optional;
-import java.util.UUID;
-
 @Controller
 @RequiredArgsConstructor
 public class PasswordResetController {
+
     private final AuthService authService;
     private final ApplicationEventPublisher eventPublisher;
 
@@ -30,8 +30,7 @@ public class PasswordResetController {
     }
 
     @PostMapping("/resetPassword")
-    public String resetPassword(HttpServletRequest request,
-                                @RequestParam("email") String userEmail) {
+    public String resetPassword(HttpServletRequest request, @RequestParam("email") String userEmail) {
         User user = authService.findByEmail(userEmail);
         if (user == null) {
             throw new UsernameNotFoundException("No user with this email");
@@ -44,9 +43,8 @@ public class PasswordResetController {
         return "redirect:/forgotPassword?email=true";
     }
 
-    @GetMapping("/user/changePassword")
-    public String showChangePasswordPage(Model model,
-                                         @RequestParam("token") String token) {
+    @GetMapping("/user/change/password")
+    public String showChangePasswordPage(Model model, @RequestParam("token") String token) {
         String result = authService.validatePasswordResetToken(token);
         if (result == null) {
             return "redirect:/login?token=true";
@@ -59,13 +57,15 @@ public class PasswordResetController {
     }
 
     @PostMapping("/user/savePassword")
-    public String savePassword( @ModelAttribute("passDto") PasswordDto passwordDto) {
+    public String savePassword(@ModelAttribute("passDto") PasswordDto passwordDto) {
         String result = authService.validatePasswordResetToken(passwordDto.getToken());
         if (result == null) {
             return "redirect:/forgotPassword?expired=true";
         }
         Optional<User> user = authService.getUserByPasswordResetToken(passwordDto.getToken());
-        user.ifPresent(value -> authService.changeUserPassword(value, passwordDto.getNewPassword()));
+        user.ifPresent(
+                value -> authService.changeUserPassword(value, passwordDto.getNewPassword())
+        );
         return "redirect:/login?pass=true";
     }
 }
